@@ -2,6 +2,9 @@ import websocket
 import time
 import logging
 import threading
+
+passwd="123456"
+
 class littlesock():
     messages=[]
     def __init__(self,sock,logger:logging.getLogger=logging):
@@ -62,7 +65,7 @@ class espweber():
         self.WS = littlesock(place,logger)
 
         while not len(self.WS.messages):time.sleep(0)
-        self.saylines("135015")
+        self.saylines(passwd)
 
         if not self.normal:"\x01"
 
