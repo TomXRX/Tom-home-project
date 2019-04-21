@@ -1,0 +1,22 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'homes/style.css' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>萧睿宣</title>
+</head>
+<body>
+剩余时间：{{lastday}}
+{{todo}}
+链接：
+{% if li %}
+    <ul>
+    {% for k in li %}
+        <li><a href="{% url k.link %}">{{ k.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+</body>
+</html>

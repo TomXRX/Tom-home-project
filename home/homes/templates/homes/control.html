@@ -1,0 +1,64 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'homes/style.css' %}">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>萧睿宣</title>
+</head>
+<body>
+我有很多能力
+
+以下是开灯的界面
+
+
+
+{% if li %}
+    {% for q in li %}
+        <ul>
+                <!--<li><a href="{% url 'homes:change' q.id %}">{{ q }}</a></li>-->
+                <li>
+                    <form action="{% url 'homes:change' q.id %}" method="post" target="iframe">
+                        {% csrf_token %}
+                        <button value="000" name="fastmode">{{ q }}</button>
+                        <button value="1" name="fastmode">开</button>
+                        <button value="0" name="fastmode">关</button>
+                    </form>
+                </li>
+                {% if q.esper.mobile %}
+                <li><form action="{% url 'homes:change' q.id %}" method="post" target="iframe">
+                        {% csrf_token %}<button value="1" name="init">初始化</button></form></li>
+                {% endif %}
+        {% for j in q.switchee_set.all %}
+            <li>
+            {% if j.pwm %}
+                <form action="{% url 'homes:change' q.id %}" method="post" target="iframe">{% csrf_token %}
+                    {{j.name}}<input type="range" min="{{j.pwm.min}}" max="{{j.pwm.max}}" value="{{j.state}}" name="{{j.id}}" oninput="submit()">
+                </form>
+            {% elif j.input %}
+                {{j.state}}
+            {% else%}
+                <form action="{% url 'homes:change' q.id %}" method="post" target="iframe">{% csrf_token %}
+                    <button  value="{{j.state}}" name="{{j.id}}">{{j.name}}</button>
+                    <button  value="1" name="{{j.id}}">开</button>
+                    <button  value="0" name="{{j.id}}">关</button>
+                </form>
+            {%endif%}
+            </li>
+        {% endfor %}<br />
+        </ul>
+
+
+
+    {% endfor %}
+
+{% else %}
+    <p>没有有效控制器</p>
+{% endif %}
+
+<iframe id="id_iframe" name="iframe" style="display:none;"></iframe>
+
+</body>
+</html>
