@@ -2,11 +2,9 @@ import websocket
 import time
 import logging
 import threading
-
 passwd="123456"
-
 class littlesock():
-    messages=[]
+    messages=list()
     def __init__(self,sock,logger:logging.getLogger=logging):
         self.logger=logger
         websocket.enableTrace(True)
@@ -46,28 +44,47 @@ class littlesock():
 
 import re,socket
 class espweber():
+    board=0
     def __init__(self,place,normal=0,logger=logging):
         self.normal=normal
         try:place=int(place)
         except:
             if not re.search("\.",place):place+=".mshome.net"
-
-            print(place)
+            logger.debug(place)
             try:place=socket.gethostbyname(place)
             except:place=socket.gethostbyname("ESP_"+place)
+
         if type(place)==int:
             place=str(place)
             place="ws://192.168.1." + place + ":8266/"
         else:
             place="ws://"+place+":8266/"
-
-        logger.debug(place)
+        logger.info(place)
         self.WS = littlesock(place,logger)
-
-        while not len(self.WS.messages):time.sleep(0)
+        for k in range(3):
+            if len(self.WS.messages):
+                break
+            time.sleep(0.5)
+        else:
+            raise Exception("NoResponse")
         self.saylines(passwd)
+        self.saylines("\x03")
+        if not self.normal:self.saylines("\x01")
 
-        if not self.normal:"\x01"
+    #TODO:测试：查看板载形式
+    def check(self):
+        self.saylines("import esp32")
+        # if error
+        #No module
+        self.board=32
+
+    def 超频(self):
+        if self.board==32:
+            self.saylines("import machine;machine.freq(240000000)")
+            #esp32默认是该频率
+        elif self.board==8266:
+            self.saylines("import machine;machine.freq(160000000)")
+
 
     def didline(self):
         if self.normal:
